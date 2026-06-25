@@ -19,7 +19,7 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, SandwormMod.MODID);
 
     public static final RegistryObject<Block> THUMPER = registerBlock("thumper",
-            () -> new ThumperBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PISTON).noOcclusion().strength(0.5F)));
+            () -> new ThumperBlock(BlockBehaviour.Properties.of().noOcclusion().strength(0.5F)));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
