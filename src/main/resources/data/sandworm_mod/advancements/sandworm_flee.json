@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "sandworm_mod:sandworm_tooth"
+      "id": "sandworm_mod:sandworm_tooth"
     },
     "title": "Tooth and Tail",
     "description": "Successfully drive away a sandworm and dislodge one of its fangs",

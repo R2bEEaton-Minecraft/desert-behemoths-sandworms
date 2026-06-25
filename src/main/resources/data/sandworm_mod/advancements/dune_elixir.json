@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "sandworm_mod:sandworm_tooth"
+      "id": "sandworm_mod:sandworm_tooth"
     },
     "title": "Elixir of the Dune",
     "description": "Use a sandworm tooth to brew powerful upgraded potions",

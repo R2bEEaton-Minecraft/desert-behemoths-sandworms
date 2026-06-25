@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:sand"
+      "id": "minecraft:sand"
     },
     "title": "The Desert Sands",
     "description": "Tread lightly, lest you awaken something massive",
