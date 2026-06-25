@@ -1,0 +1,12 @@
+A few things to test:
+
+Does the game launch without crashes?
+Can you place and activate a thumper block (right-click)?
+Does running in a desert accumulate worm sign and eventually spawn a worm?
+Are the worm segments visible with GeckoLib rendering?
+Does a worm tooth drop after hitting the worm head with explosions, and can you brew it into a potion?
+The main things that changed between 1.20.1 and 1.21.1 visually are:
+
+Screen shake removed (Lodestone had no 1.21.1 Forge port) — sounds still play
+Effekseer sand impact particles removed — replaced with vanilla block/sand particles on breach/land
+Sonic boom ripple shader (post-processing removed) — visual only, gameplay unaffected

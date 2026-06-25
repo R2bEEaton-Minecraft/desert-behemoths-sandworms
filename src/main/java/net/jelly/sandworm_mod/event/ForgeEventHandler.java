@@ -36,6 +36,20 @@ public class ForgeEventHandler {
 
     @SubscribeEvent
     public static void RegisterModCommands(RegisterCommandsEvent event) {
+        com.mojang.brigadier.CommandDispatcher<net.minecraft.commands.CommandSourceStack> dispatcher = event.getDispatcher();
+        dispatcher.register(
+            net.minecraft.commands.Commands.literal("spawnworm")
+                .requires(src -> src.hasPermission(2))
+                .executes(ctx -> {
+                    net.minecraft.commands.CommandSourceStack src = ctx.getSource();
+                    net.minecraft.world.phys.Vec3 pos = src.getPosition();
+                    WormChainEntity worm = new WormChainEntity(ModEntities.WORM_CHAIN.get(), src.getLevel());
+                    worm.moveTo(pos.x, pos.y, pos.z);
+                    src.getLevel().addFreshEntity(worm);
+                    src.sendSuccess(() -> net.minecraft.network.chat.Component.literal("Spawned sandworm at " + (int)pos.x + " " + (int)pos.y + " " + (int)pos.z), true);
+                    return 1;
+                })
+        );
     }
 
     @SubscribeEvent
