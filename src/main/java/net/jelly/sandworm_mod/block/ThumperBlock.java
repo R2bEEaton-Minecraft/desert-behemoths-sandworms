@@ -1,21 +1,15 @@
 package net.jelly.sandworm_mod.block;
 
 import net.jelly.sandworm_mod.advancements.AdvancementTriggerRegistry;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.BannerBlock;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -29,16 +23,19 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-import static net.jelly.sandworm_mod.helper.AdvancementHelper.grantAdvancement;
-
 public class ThumperBlock extends BaseEntityBlock {
-    public static final VoxelShape SHAPE = Block.box(5,0,5,11,17,11);
+    public static final MapCodec<ThumperBlock> CODEC = simpleCodec(ThumperBlock::new);
+    public static final VoxelShape SHAPE = Block.box(5, 0, 5, 11, 17, 11);
     public static final BooleanProperty THUMPING = BooleanProperty.create("thumping");
+
+    @Override
+    public MapCodec<ThumperBlock> codec() {
+        return CODEC;
+    }
 
     public ThumperBlock(Properties pProperties) {
         super(pProperties);
-        registerDefaultState(this.stateDefinition.any()
-                .setValue(THUMPING, false));
+        registerDefaultState(this.stateDefinition.any().setValue(THUMPING, false));
     }
 
     @Override
@@ -58,13 +55,12 @@ public class ThumperBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos,
-                                 Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if(!pLevel.isClientSide() && pHand == InteractionHand.MAIN_HAND) {
+    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos,
+                                               Player pPlayer, BlockHitResult pHit) {
+        if (!pLevel.isClientSide()) {
             boolean currentState = pState.getValue(THUMPING);
             pLevel.setBlock(pPos, pState.setValue(THUMPING, !currentState), 8);
         }
-
         return InteractionResult.SUCCESS;
     }
 

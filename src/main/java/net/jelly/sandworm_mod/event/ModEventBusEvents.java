@@ -10,35 +10,24 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid= SandwormMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = SandwormMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEventBusEvents {
 
-    // events that implement IModBusEvent are mod bus events
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
     }
 
-
-    // REGISTER CAPABILITIES
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
         event.register(WormSign.class);
     }
 
-    // creative mode tabs
     @SubscribeEvent
     public static void buildContents(BuildCreativeModeTabContentsEvent event) {
-        // Add to ingredients tab
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(ModItems.WORM_TOOTH);
-        }
-        else if (event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS || event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
+        } else if (event.getTabKey() == CreativeModeTabs.REDSTONE_BLOCKS || event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
             event.accept(ModItems.THUMPER_ITEM);
         }
     }
-
-
-
-
-
 }

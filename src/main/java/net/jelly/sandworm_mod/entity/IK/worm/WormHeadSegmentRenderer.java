@@ -10,7 +10,6 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public class WormHeadSegmentRenderer extends GeoEntityRenderer<WormHeadSegment> {
 
-
     public WormHeadSegmentRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new WormHeadSegmentModel());
     }
@@ -29,15 +28,11 @@ public class WormHeadSegmentRenderer extends GeoEntityRenderer<WormHeadSegment> 
         matrix.rotateTowards(dirVec.toVector3f(), upVec.toVector3f());
         Vec3 scaleVec = entity.getVisualScale();
 
-        // rendering executes at the position of the entity (feet) but we want it in the middle
-        poseStack.translate(0, scaleVec.y/2f, 0);
-        poseStack.mulPoseMatrix(matrix);
-        poseStack.scale((float)scaleVec.x, (float)scaleVec.y, (float)scaleVec.z);
+        poseStack.translate(0, scaleVec.y / 2f, 0);
+        poseStack.last().pose().mul(matrix);
+        poseStack.scale((float) scaleVec.x, (float) scaleVec.y, (float) scaleVec.z);
 
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, 15728640);
         poseStack.popPose();
     }
 }
-
-
-

@@ -1,59 +1,32 @@
 package net.jelly.sandworm_mod.worldevents;
 
-import net.jelly.sandworm_mod.registry.common.WorldEventRegistry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.Level;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import team.lodestar.lodestone.systems.worldevent.WorldEventInstance;
 
-public class WormBreachWorldEvent extends WorldEventInstance {
-    public Vec3 position;
-    public boolean spawnedParticles;
-    public int lifetime = 0;
-
-    public WormBreachWorldEvent() {
-        super(WorldEventRegistry.WORM_BREACH);
-    }
+public class WormBreachWorldEvent {
+    private Vec3 position;
 
     public WormBreachWorldEvent setPosition(Vec3 pos) {
-        position = pos;
+        this.position = pos;
         return this;
     }
 
-    @Override
-    public void tick(Level level) {
-        if(this.level == null) {
-            this.discarded = true;
-            return;
+    public void spawnParticles(ServerLevel level) {
+        if (position == null) return;
+        BlockParticleOption sandParticle = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SAND.defaultBlockState());
+        // Spawn a ring of sand particles around the breach point
+        for (int i = 0; i < 36; i++) {
+            double angle = i * (Math.PI * 2 / 36);
+            double offsetX = Math.cos(angle) * 3.0;
+            double offsetZ = Math.sin(angle) * 3.0;
+            level.sendParticles(sandParticle,
+                    position.x + offsetX, position.y + 0.5, position.z + offsetZ,
+                    5, 0.5, 0.3, 0.5, 0.15);
         }
-        lifetime++;
-        if(lifetime >= 480) {
-            this.discarded = true;
-            this.end(level);
-        }
-        super.tick(level);
-    }
-
-    @Override
-    public CompoundTag serializeNBT(CompoundTag tag) {
-        tag.putDouble("x", position.x);
-        tag.putDouble("y", position.y);
-        tag.putDouble("z", position.z);
-        tag.putBoolean("spawnedparticles", spawnedParticles);
-        tag.putDouble("age", lifetime);
-        return super.serializeNBT(tag);
-    }
-
-    @Override
-    public WorldEventInstance deserializeNBT(CompoundTag tag) {
-        this.position = new Vec3(tag.getDouble("x"), tag.getDouble("y"), tag.getDouble("z"));
-        spawnedParticles = tag.getBoolean("spawnedparticles");
-        lifetime = tag.getInt("age");
-        return super.deserializeNBT(tag);
-    }
-
-    @Override
-    public boolean isClientSynced() {
-        return true;
+        // Extra burst at center
+        level.sendParticles(sandParticle, position.x, position.y + 1, position.z, 30, 1.5, 0.5, 1.5, 0.2);
     }
 }

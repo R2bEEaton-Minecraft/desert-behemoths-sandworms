@@ -13,14 +13,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.syncher.SynchedEntityData;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,11 +33,15 @@ public class WormSegment extends ChainSegment implements GeoEntity {
     private AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
     private UUID ownerEntityUUID;
     private int discardTimer = 0;
-    private DamageSource dmgSource =
-            new DamageSource(this.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypesRegistry.WORM));
 
     public WormSegment(EntityType<?> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
+    }
+
+    private DamageSource getDamageSource() {
+        return new DamageSource(
+                this.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypesRegistry.WORM)
+        );
     }
 
     @Override
@@ -44,43 +49,40 @@ public class WormSegment extends ChainSegment implements GeoEntity {
         super.tick();
         this.lookAt(EntityAnchorArgument.Anchor.FEET, this.position().add(this.getDirectionVector()));
 
-        if(!this.level().isClientSide()) {
-            // check for owner
-            if(getOwner() == null) {
-                if(this.discardTimer < 120) discardTimer++;
+        if (!this.level().isClientSide()) {
+            if (getOwner() == null) {
+                if (this.discardTimer < 120) discardTimer++;
                 else this.discard();
-            }
-            else discardTimer = 0;
+            } else discardTimer = 0;
 
-            // collisions & deal damage & kb
             List<Entity> collidingEntities = level().getEntities(this, this.getBoundingBox());
             for (int i = 0; i < collidingEntities.size(); i++) {
                 if (collidingEntities.get(i) instanceof LivingEntity) {
                     LivingEntity target = (LivingEntity) (collidingEntities.get(i));
-                    if(target.hurtTime == 0) {
+                    if (target.hurtTime == 0) {
                         Vec3 vec3 = (target.position().subtract(this.position())).normalize();
-                        target.hurt(dmgSource, (float)getDamage());
+                        target.hurt(getDamageSource(), (float) getDamage());
                         Vec3 knockback = getKB();
-                        target.addDeltaMovement(new Vec3(vec3.x*knockback.x, vec3.y*knockback.y, vec3.z*knockback.z));
+                        target.addDeltaMovement(new Vec3(vec3.x * knockback.x, vec3.y * knockback.y, vec3.z * knockback.z));
                     }
                 }
             }
         }
-
     }
 
     protected double getDamage() { return (10.0f * CommonConfigs.DAMAGE_SCALE.get()); }
-    protected Vec3 getKB() {return new Vec3(3,2,3); }
+    protected Vec3 getKB() { return new Vec3(3, 2, 3); }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
         controllerRegistrar.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
+
     private <T extends GeoAnimatable> PlayState predicate(AnimationState<T> tAnimationState) {
         return PlayState.CONTINUE;
     }
@@ -105,16 +107,16 @@ public class WormSegment extends ChainSegment implements GeoEntity {
     public void setOwnerEntityUUID(UUID uuid) {
         this.ownerEntityUUID = uuid;
     }
+
     public WormChainEntity getOwner() {
         List<WormChainEntity> nearbyChainEntities = this.level().getEntitiesOfClass(
                 WormChainEntity.class,
                 new AABB(this.position().add(200, 200, 200), this.position().add(-200, -200, -200))
         );
-        return
-                nearbyChainEntities.stream()
-                        .filter(obj -> obj.getStringUUID().equals(ownerEntityUUID.toString()))
-                        .findFirst()
-                        .orElse(null);
+        return nearbyChainEntities.stream()
+                .filter(obj -> obj.getStringUUID().equals(ownerEntityUUID.toString()))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

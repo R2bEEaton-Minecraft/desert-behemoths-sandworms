@@ -1,6 +1,6 @@
 package net.jelly.sandworm_mod.helper;
 
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
@@ -10,12 +10,12 @@ import java.util.Optional;
 
 public class AdvancementHelper {
     public static void grantAdvancement(ServerPlayer player, ResourceLocation advancementId) {
-        Optional<Advancement> advancementOptional = player.server.getAdvancements().getAllAdvancements().stream()
-                .filter(adv -> adv.m_138327_().equals(advancementId))
+        Optional<AdvancementHolder> advancementOptional = player.server.getAdvancements().getAllAdvancements().stream()
+                .filter(adv -> adv.id().equals(advancementId))
                 .findFirst();
 
         if (advancementOptional.isPresent()) {
-            Advancement advancement = advancementOptional.get();
+            AdvancementHolder advancement = advancementOptional.get();
             PlayerAdvancements advancements = player.getAdvancements();
             AdvancementProgress progress = advancements.getOrStartProgress(advancement);
 

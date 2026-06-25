@@ -14,11 +14,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.*;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.PlayState;
 
 import static net.jelly.sandworm_mod.helper.BiomeHelper.isDesertBiome;
 import static net.jelly.sandworm_mod.helper.WarningSpawnHelper.*;
@@ -108,7 +108,8 @@ public class ThumperBlockEntity extends BlockEntity implements GeoBlockEntity {
             e.pauseTicks = 500;
             spawnWormThumper(level, blockPos);
             level.getNearbyPlayers(TargetingConditions.forNonCombat(), null,
-                    new AABB(blockPos.offset(50, 200, 50), blockPos.offset(-50, -200, -50))).forEach(player -> {
+                    new AABB(blockPos.getX()-50, blockPos.getY()-200, blockPos.getZ()-50,
+                             blockPos.getX()+50, blockPos.getY()+200, blockPos.getZ()+50)).forEach(player -> {
                 AdvancementTriggerRegistry.THUMPER.trigger((ServerPlayer)player);
             });
         }

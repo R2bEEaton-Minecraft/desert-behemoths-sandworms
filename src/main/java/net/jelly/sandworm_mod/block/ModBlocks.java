@@ -7,7 +7,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -20,7 +19,7 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, SandwormMod.MODID);
 
     public static final RegistryObject<Block> THUMPER = registerBlock("thumper",
-            () -> new ThumperBlock(BlockBehaviour.Properties.copy(Blocks.PISTON).noOcclusion().strength(0.5F).pushReaction(PushReaction.DESTROY)));
+            () -> new ThumperBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PISTON).noOcclusion().strength(0.5F)));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
