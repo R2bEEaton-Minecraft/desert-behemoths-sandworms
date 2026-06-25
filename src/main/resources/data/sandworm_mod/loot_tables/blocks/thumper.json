@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "sandworm_mod:thumper"
+          "id": "sandworm_mod:thumper"
         }
       ],
       "rolls": 1.0

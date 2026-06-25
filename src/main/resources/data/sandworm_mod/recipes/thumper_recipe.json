@@ -6,12 +6,8 @@
     "R"
   ],
   "key": {
-    "P": {
-      "item": "minecraft:piston"
-    },
-    "R": {
-      "item": "minecraft:repeater"
-    }
+    "P": "minecraft:piston",
+    "R": "minecraft:repeater"
   },
   "result": {
     "id": "sandworm_mod:thumper"
