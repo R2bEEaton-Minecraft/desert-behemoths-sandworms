@@ -7,14 +7,15 @@ import net.jelly.sandworm_mod.entity.IK.ChainSegment;
 import net.jelly.sandworm_mod.entity.IK.KinematicChainEntity;
 import net.jelly.sandworm_mod.entity.ModEntities;
 import net.jelly.sandworm_mod.item.ModItems;
+import net.jelly.sandworm_mod.network.SandwormNetwork;
 import net.jelly.sandworm_mod.sound.ModSounds;
+import net.jelly.sandworm_mod.worldevents.SonicBoomWorldEvent;
 import net.jelly.sandworm_mod.worldevents.WormBreachWorldEvent;
 import net.jelly.sandworm_mod.worldevents.WormRippleWorldEvent;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -141,10 +142,9 @@ public class WormChainEntity extends KinematicChainEntity {
     }
 
     private void VFXSFXBehavior() {
-        List<Player> players = (List<Player>) this.level().players();
-
         // burrowing vfx/sfx
         if (this.level().collidesWithSuffocatingBlock(null, head.getBoundingBox())) {
+            sendBurrowScreenshake();
             Vec3 targetedObjectPos = getTargetedObjectPos();
             if (targetedObjectPos != null) {
                 double dist = targetedObjectPos.distanceTo(head.position());
@@ -371,7 +371,7 @@ public class WormChainEntity extends KinematicChainEntity {
 
     public void blastHit() {
         targetV = new Vec3(targetV.x * 0.075, targetV.y + 1.2, targetV.z * 0.075);
-        // Sonic boom visual removed (Lodestone not available for Forge 1.21.1)
+        sonicBoom();
         explodedTimes++;
         if (explodedTimes >= CommonConfigs.HEALTH.get()) {
             ItemEntity toothItem = new ItemEntity(this.level(), head.getX(), head.getY(), head.getZ(),
@@ -403,6 +403,32 @@ public class WormChainEntity extends KinematicChainEntity {
     private void sinkHole(Vec3 pos) {
         WormRippleWorldEvent ripple = new WormRippleWorldEvent().spawnRipple(pos);
         activeRipples.add(ripple);
+    }
+
+    private void sonicBoom() {
+        if (head == null) return;
+        SonicBoomWorldEvent.spawn(this.level(), this.head);
+
+        List<Player> players = (List<Player>) this.level().players();
+        players.forEach(player -> {
+            float dist = player.distanceTo(head);
+            if (dist <= 100 && player instanceof ServerPlayer serverPlayer) {
+                SandwormNetwork.sendToPlayer(serverPlayer,
+                        SandwormNetwork.ScreenShakePacket.positioned(80, head.position(), 100.0f, 0.85f, 0.0f));
+            }
+        });
+    }
+
+    private void sendBurrowScreenshake() {
+        List<Player> players = (List<Player>) this.level().players();
+        for (Player player : players) {
+            float dist = player.distanceTo(head);
+            if (dist <= 100 && player instanceof ServerPlayer serverPlayer) {
+                float intensity = (float) Math.pow((1f + Math.pow(1.1f, dist - 17.5f)), -1) + 0.2f;
+                SandwormNetwork.sendToPlayer(serverPlayer,
+                        SandwormNetwork.ScreenShakePacket.positioned(20, head.position(), 100.0f, 0.65f * intensity, 0.0f));
+            }
+        }
     }
 
     private Vec3 getTargetedObjectPos() {

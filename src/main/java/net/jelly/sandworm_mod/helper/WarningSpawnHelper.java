@@ -3,29 +3,50 @@ package net.jelly.sandworm_mod.helper;
 import net.jelly.sandworm_mod.advancements.AdvancementTriggerRegistry;
 import net.jelly.sandworm_mod.entity.IK.worm.WormChainEntity;
 import net.jelly.sandworm_mod.entity.ModEntities;
+import net.jelly.sandworm_mod.network.SandwormNetwork;
 import net.jelly.sandworm_mod.sound.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.Random;
 
 import static net.jelly.sandworm_mod.helper.BiomeHelper.isDesertBiome;
 
 public class WarningSpawnHelper {
     public static void warningScreenshake(Player player, double strength, SoundEvent sound, int stage, int wormsign) {
-        // Screen shake (Lodestone) not available for Forge 1.21.1; sound cue still plays.
         player.level().playSeededSound(null, player.getX(), player.getY(), player.getZ(),
                 sound, SoundSource.MASTER, 12.5f, 1, 0);
+
+        List<Player> nearbyPlayers = player.level().getNearbyPlayers(TargetingConditions.forNonCombat(), null,
+                new AABB(player.position().add(200, 500, 200), player.position().subtract(200, 500, 200)));
+        nearbyPlayers.forEach(p -> {
+            if (p instanceof ServerPlayer serverPlayer) {
+                SandwormNetwork.sendToPlayer(serverPlayer,
+                        SandwormNetwork.ScreenShakePacket.global(410, (float) strength, 0.0f));
+            }
+        });
     }
 
     public static void thumperWarning(Level level, Vec3 pos) {
         level.playSeededSound(null, pos.x, pos.y, pos.z,
                 ModSounds.WORM_WARNING_2.get(), SoundSource.MASTER, 12.5f, 1, 0);
+
+        List<Player> nearbyPlayers = level.getNearbyPlayers(TargetingConditions.forNonCombat(), null,
+                new AABB(pos.add(200, 500, 200), pos.subtract(200, 500, 200)));
+        nearbyPlayers.forEach(p -> {
+            if (p instanceof ServerPlayer serverPlayer) {
+                SandwormNetwork.sendToPlayer(serverPlayer,
+                        SandwormNetwork.ScreenShakePacket.global(410, 0.6f, 0.0f));
+            }
+        });
     }
 
     private static Vec3 spawnPosOffset() {

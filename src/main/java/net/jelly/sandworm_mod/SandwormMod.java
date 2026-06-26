@@ -11,6 +11,7 @@ import net.jelly.sandworm_mod.entity.IK.worm.WormHeadSegmentRenderer;
 import net.jelly.sandworm_mod.entity.IK.worm.WormSegmentRenderer;
 import net.jelly.sandworm_mod.entity.ModEntities;
 import net.jelly.sandworm_mod.item.ModItems;
+import net.jelly.sandworm_mod.network.SandwormNetwork;
 import net.jelly.sandworm_mod.sound.ModSounds;
 import net.jelly.sandworm_mod.registry.client.ParticleRegistry;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -46,6 +47,7 @@ public class SandwormMod
 
         ModSounds.register(modEventBus);
         ParticleRegistry.register(modEventBus);
+        SandwormNetwork.register();
 
         context.registerConfig(ModConfig.Type.COMMON, CommonConfigs.SPEC, "sandwormmod-common.toml");
 

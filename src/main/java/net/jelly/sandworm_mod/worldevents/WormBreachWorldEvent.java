@@ -1,5 +1,6 @@
 package net.jelly.sandworm_mod.worldevents;
 
+import net.jelly.sandworm_mod.registry.client.ParticleRegistry;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -17,16 +18,23 @@ public class WormBreachWorldEvent {
     public void spawnParticles(ServerLevel level) {
         if (position == null) return;
         BlockParticleOption sandParticle = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SAND.defaultBlockState());
-        // Spawn a ring of sand particles around the breach point
-        for (int i = 0; i < 36; i++) {
-            double angle = i * (Math.PI * 2 / 36);
-            double offsetX = Math.cos(angle) * 3.0;
-            double offsetZ = Math.sin(angle) * 3.0;
+
+        for (int i = 0; i < 72; i++) {
+            double angle = i * (Math.PI * 2 / 72);
+            double offsetX = Math.cos(angle) * 3.5;
+            double offsetZ = Math.sin(angle) * 3.5;
             level.sendParticles(sandParticle,
                     position.x + offsetX, position.y + 0.5, position.z + offsetZ,
-                    5, 0.5, 0.3, 0.5, 0.15);
+                    7, 0.65, 0.5, 0.65, 0.22);
+            level.sendParticles(ParticleRegistry.SAND_IMPACT.get(),
+                    position.x + offsetX * 0.55, position.y + 0.8, position.z + offsetZ * 0.55,
+                    1, 0.18, 0.12, 0.18, 0.035);
         }
-        // Extra burst at center
-        level.sendParticles(sandParticle, position.x, position.y + 1, position.z, 30, 1.5, 0.5, 1.5, 0.2);
+
+        level.sendParticles(sandParticle, position.x, position.y + 1, position.z, 80, 2.0, 0.8, 2.0, 0.28);
+        level.sendParticles(ParticleRegistry.SAND_IMPACT.get(), position.x, position.y + 1.2, position.z,
+                36, 1.8, 0.5, 1.8, 0.06);
+        level.sendParticles(ParticleTypes.POOF, position.x, position.y + 1.0, position.z,
+                18, 1.5, 0.35, 1.5, 0.08);
     }
 }
