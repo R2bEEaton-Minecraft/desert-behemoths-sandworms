@@ -161,19 +161,20 @@ public class WormChainEntity extends KinematicChainEntity {
         if (!breaching && predictBreach(this.level(), head)) {
             breaching = true;
             Vec3 particlePos = head.position().add(head.getDirectionVector().scale(8));
-            smokeParticles(particlePos.add(0, -9, 0));
+            // smokeParticles(particlePos.add(0, -9, 0)); // EFFECTS: breach particles — temporarily disabled
             if (!escaping) this.playSound(ModSounds.WORM_BREACH.get(), 10f, 1f);
         } else if (breaching && !predictBreach(this.level(), head)) {
             breaching = false;
             Vec3 particlePos = head.position().add(head.getDirectionVector().scale(8));
-            smokeParticles(particlePos.add(0, -9, 0));
+            // smokeParticles(particlePos.add(0, -9, 0)); // EFFECTS: land particles — temporarily disabled
             if (!escaping) this.playSound(ModSounds.WORM_LAND.get(), 10f, 1f);
         }
 
         // tick active ripple events
-        if (this.level() instanceof ServerLevel serverLevel) {
-            activeRipples.removeIf(ripple -> !ripple.tick(serverLevel));
-        }
+        // EFFECTS: ripple ticking temporarily disabled
+        // if (this.level() instanceof ServerLevel serverLevel) {
+        //     activeRipples.removeIf(ripple -> !ripple.tick(serverLevel));
+        // }
     }
 
     private void wormAIBehavior() {
@@ -195,7 +196,7 @@ public class WormChainEntity extends KinematicChainEntity {
                 if (!(stage == 0 && targetedObjectPos.distanceTo(head.position()) < 22 * SPEED_SCALE))
                     goal = targetedObjectPos;
                 else if (goal == null) goal = targetedObjectPos;
-                else if (stage == 0) sinkHole(goal);
+                // else if (stage == 0) sinkHole(goal); // EFFECTS: sand ripple particles — temporarily disabled
             }
 
             target = head.position().add(targetV);
