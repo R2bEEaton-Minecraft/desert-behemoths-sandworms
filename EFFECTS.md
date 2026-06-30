@@ -8,17 +8,14 @@ This document records every visual-effect call that was commented out, where to 
 
 **File:** `src/main/java/net/jelly/sandworm_mod/event/WormSignHandler.java`
 
-| Line | Original call |
-|------|--------------|
-| 117 | `warningScreenshake(player, 0.5, ModSounds.WORM_WARNING_1.get(), ws.getStage(), ws.getWS());` |
-| 122 | `warningScreenshake(player, 0.6, ModSounds.WORM_WARNING_2.get(), ws.getStage(), ws.getWS());` |
+**Status: audio restored; screen shake still unavailable.**
 
-**What it does:** Fires a screen-shake and warning sound at worm-sign thresholds 50 % and 80 % of the spawn value. The shake portion was already stripped in the 1.21.1 port (Lodestone has no Forge 1.21.1 release); what remains in `warningScreenshake()` is just the `playSeededSound` call. Commenting these lines therefore also silences the warning audio cues.
+**What it does:** Fires a warning cue at worm-sign thresholds 50 % and 80 % of the spawn value. The shake portion was already stripped in the 1.21.1 port (Lodestone has no Forge 1.21.1 release); what remains in `warningScreenshake()` is the `playSeededSound` call, so the sprint warning audio must stay enabled even while screen shake is absent.
 
 **Implementation:** `WarningSpawnHelper.warningScreenshake()` at
 `src/main/java/net/jelly/sandworm_mod/helper/WarningSpawnHelper.java:20`
 
-**To restore:** Un-comment lines 117 and 122 in `WormSignHandler.java`. If the Lodestone screen-shake API becomes available for Forge 1.21.1 it can be re-added inside `warningScreenshake()`.
+**To restore the visual effect:** If the Lodestone screen-shake API becomes available for Forge 1.21.1 it can be re-added inside `warningScreenshake()`.
 
 ---
 

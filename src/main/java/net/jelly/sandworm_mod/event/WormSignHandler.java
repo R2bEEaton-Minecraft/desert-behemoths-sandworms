@@ -114,12 +114,12 @@ public class WormSignHandler {
     private static void incrementWormSign(int add, Player player, WormSign ws) {
         int spawnWorm = CommonConfigs.SPAWNWORM_WORMSIGN.get();
         if (ws.getWS() < spawnWorm / 2 && (ws.getWS() + add) >= spawnWorm / 2) {
-            // warningScreenshake(player, 0.5, ModSounds.WORM_WARNING_1.get(), ws.getStage(), ws.getWS()); // EFFECTS: screen shake / warning sound — temporarily disabled
+            warningScreenshake(player, 0.5, ModSounds.WORM_WARNING_1.get(), ws.getStage(), ws.getWS());
             ws.setStage(1);
             ws.setStageTimer(600);
             ws.setSignTimer();
         } else if (ws.getWS() < spawnWorm * 0.8 && (ws.getWS() + add) >= spawnWorm * 0.8) {
-            // warningScreenshake(player, 0.6, ModSounds.WORM_WARNING_2.get(), ws.getStage(), ws.getWS()); // EFFECTS: screen shake / warning sound — temporarily disabled
+            warningScreenshake(player, 0.6, ModSounds.WORM_WARNING_2.get(), ws.getStage(), ws.getWS());
             ws.setStage(2);
             ws.setStageTimer(600);
             ws.setSignTimer();
